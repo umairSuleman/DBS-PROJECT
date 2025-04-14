@@ -1,5 +1,4 @@
---coach
-
+-- COACH Table
 CREATE TABLE coach (
     coach_id INT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -8,20 +7,19 @@ CREATE TABLE coach (
     championships INT DEFAULT 0
 );
 
---team
-
+-- TEAM Table
 CREATE TABLE team (
     team_id INT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     coach_id INT UNIQUE,
     stadium VARCHAR(100),
     founding_year INT,
-    FOREIGN KEY(coach_id) REFERENCES coach(coach_id) ON DELETE SET NULL
+    FOREIGN KEY(coach_id) REFERENCES coach(coach_id) 
+        ON DELETE SET NULL 
+        ON UPDATE CASCADE
 );
 
---player
-
-
+-- PLAYER Table
 CREATE TABLE player (
     player_id INT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -30,12 +28,12 @@ CREATE TABLE player (
     position VARCHAR(50),
     team_id INT,
     nationality VARCHAR(50),
-    FOREIGN KEY (team_id) REFERENCES team(team_id) ON DELETE SET NULL
+    FOREIGN KEY (team_id) REFERENCES team(team_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
 );
 
-
---season
-
+-- SEASON Table
 CREATE TABLE season (
     season_id INT PRIMARY KEY,
     season_year YEAR NOT NULL,
@@ -43,11 +41,11 @@ CREATE TABLE season (
     end_date DATE,
     champion_team_id INT,
     FOREIGN KEY (champion_team_id) REFERENCES team(team_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
 );
 
-
---match
-
+-- MATCHES Table
 CREATE TABLE matches (
     match_id INT PRIMARY KEY,
     season_id INT,
@@ -59,15 +57,19 @@ CREATE TABLE matches (
     a_goals INT DEFAULT NULL,
     referee VARCHAR(100),
     venue VARCHAR(100),
-    FOREIGN KEY (season_id) REFERENCES season(season_id),
-    FOREIGN KEY (home_team_id) REFERENCES team(team_id),
-    FOREIGN KEY (away_team_id) REFERENCES team(team_id),
-    CHECK (home_team_id <> away_team_id)
+    FOREIGN KEY (season_id) REFERENCES season(season_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (home_team_id) REFERENCES team(team_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (away_team_id) REFERENCES team(team_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+    -- Removed the CHECK constraint
 );
 
-
---standings
-
+-- STANDINGS Table
 CREATE TABLE standings (
     team_id INT,
     season_id INT,
@@ -80,28 +82,15 @@ CREATE TABLE standings (
     goals_against INT DEFAULT 0,
     points INT DEFAULT 0,
     PRIMARY KEY (team_id, season_id),
-    FOREIGN KEY (team_id) REFERENCES team(team_id),
+    FOREIGN KEY (team_id) REFERENCES team(team_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (season_id) REFERENCES season(season_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
-
---match result
-
-CREATE TABLE match_results (
-    team_id INT,
-    match_id INT,
-    result ENUM('W', 'L', 'D'),
-    goals_for INT,
-    goals_against INT,
-    PRIMARY KEY (team_id, match_id),
-    FOREIGN KEY (team_id) REFERENCES team(team_id),
-    FOREIGN KEY (match_id) REFERENCES matches(match_id)
-);
-
-
---stats
-
-
+-- STATS Table
 CREATE TABLE stats (
     player_id INT,
     match_id INT,
@@ -117,6 +106,10 @@ CREATE TABLE stats (
     pass_accuracy DECIMAL(5,2) DEFAULT 0.0,
     minutes_played INT DEFAULT 0,
     PRIMARY KEY (player_id, match_id),
-    FOREIGN KEY (player_id) REFERENCES player(player_id),
+    FOREIGN KEY (player_id) REFERENCES player(player_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (match_id) REFERENCES matches(match_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
