@@ -1,0 +1,21 @@
+.scheduled-games {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table {
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .scheduled-games {
+    padding: 10px;
+    overflow-x: auto;
+  }
+  
+  .table {
+    font-size: 0.85rem;
+  }
+}
